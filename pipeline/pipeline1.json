@@ -1,0 +1,58 @@
+{
+	"name": "pipeline1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Power Query1",
+				"type": "ExecuteWranglingDataflow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "powerquery1",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"UserQueryonlydatasetforall": {
+								"foldername": "PowerqueryOutput",
+								"filename": "file1.csv"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"queries": [
+						{
+							"queryName": "UserQuery",
+							"dataflowSinks": [
+								{
+									"name": "UserQueryonlydatasetforall",
+									"dataset": {
+										"referenceName": "onlydatasetforall",
+										"type": "DatasetReference",
+										"parameters": {
+											"foldername": "PowerqueryOutput",
+											"filename": "file1.csv"
+										}
+									},
+									"script": "sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tId as string,\n\t\tName as string,\n\t\tDOB as string,\n\t\tCity as string,\n\t\tState as string,\n\t\tDeptId as string\n\t),\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> UserQueryonlydatasetforall"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2022-09-04T10:12:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

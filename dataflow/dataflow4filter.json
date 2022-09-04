@@ -1,0 +1,62 @@
+{
+	"name": "dataflow4filter",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "onlydatasetforall",
+						"type": "DatasetReference"
+					},
+					"name": "student"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "onlydatasetforall",
+						"type": "DatasetReference"
+					},
+					"name": "sink2"
+				}
+			],
+			"transformations": [
+				{
+					"name": "filterdept"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          Id as string,",
+				"          Name as string,",
+				"          DOB as string,",
+				"          City as string,",
+				"          State as string,",
+				"          DeptId as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> student",
+				"student filter(equals(DeptId,'1')) ~> filterdept",
+				"filterdept sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          Id as string,",
+				"          Name as string,",
+				"          DOB as string,",
+				"          City as string,",
+				"          State as string,",
+				"          DeptId as string",
+				"     ),",
+				"     partitionFileNames:['stuafterfilter.csv'],",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink2"
+			]
+		}
+	}
+}

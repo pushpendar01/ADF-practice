@@ -1,0 +1,28 @@
+{
+	"name": "group by and joins",
+	"properties": {
+		"type": "WranglingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"name": "inputdata",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> inputdata",
+					"dataset": {
+						"referenceName": "inputdata",
+						"type": "DatasetReference"
+					}
+				},
+				{
+					"name": "onlydatasetforall",
+					"script": "source(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> onlydatasetforall",
+					"dataset": {
+						"referenceName": "onlydatasetforall",
+						"type": "DatasetReference"
+					}
+				}
+			],
+			"script": "section Section1;\r\nshared inputdata = let AdfDoc = AzureStorage.DataLakeContents(\"https://adfinfydatalake.dfs.core.windows.net/pushpendar/StudentData/Student.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]) in  PromotedHeaders;\r\nshared onlydatasetforall = let AdfDoc = AzureStorage.DataLakeContents(\"https://adfinfydatalake.dfs.core.windows.net/pushpendar/StudentData/Department.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]) in  PromotedHeaders;\r\nshared UserQuery = let Source = #\"inputdata\",\r\n  #\"Removed columns\" = Table.RemoveColumns(Source, {\"DOB\", \"State\"}),\r\n  #\"Merged queries\" = Table.NestedJoin(#\"Removed columns\", {\"DeptId\"}, onlydatasetforall, {\"Id\"}, \"onlydatasetforall\", JoinKind.LeftOuter),\r\n  #\"Expanded onlydatasetforall\" = Table.ExpandTableColumn(#\"Merged queries\", \"onlydatasetforall\", {\"Id\", \"Name\"}, {\"Id.1\", \"Name.1\"}),\r\n  #\"Removed columns 1\" = Table.RemoveColumns(#\"Expanded onlydatasetforall\", {\"City\", \"DeptId\"}),\r\n  #\"Grouped rows\" = Table.Group(#\"Removed columns 1\", {\"Id.1\"}, {{\"numbers\", each Table.RowCount(_), Int64.Type}}) in #\"Grouped rows\";\r\n",
+			"documentLocale": "en-us"
+		}
+	}
+}

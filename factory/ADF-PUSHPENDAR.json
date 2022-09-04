@@ -1,0 +1,9 @@
+{
+	"name": "ADF-PUSHPENDAR",
+	"location": "centralindia",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "9137e49b-64d0-4d3c-949b-d791c0c2e6af",
+		"tenantId": "69a57c80-65e1-4fd1-a2b7-1093da4a336b"
+	}
+}
