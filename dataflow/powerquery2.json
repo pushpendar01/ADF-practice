@@ -13,7 +13,7 @@
 					}
 				}
 			],
-			"script": "section Section1;\r\nshared inputdata = let AdfDoc = AzureStorage.DataLakeContents(\"https://adfinfydatalake.dfs.core.windows.net/pushpendar/StudentData/Student.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]) in  PromotedHeaders;\r\nshared UserQuery = let Source = #\"inputdata\",\r\n  #\"Removed columns\" = Table.RemoveColumns(Source, {\"DOB\", \"City\"}) in #\"Removed columns\";\r\n",
+			"script": "section Section1;\r\nshared inputdata = let AdfDoc = AzureStorage.DataLakeContents(\"https://adfinfydatalake.dfs.core.windows.net/pushpendar/StudentData/Student.csv\"),Csv = Csv.Document(AdfDoc, [Delimiter = \",\", Encoding = TextEncoding.Utf8, QuoteStyle = QuoteStyle.Csv]), PromotedHeaders = Table.PromoteHeaders(Csv, [PromoteAllScalars = true]) in  PromotedHeaders;\r\nshared UserQuery = let Source = #\"inputdata\",\r\n  #\"Removed columns\" = Table.RemoveColumns(Source, {\"DOB\", \"City\"}),\r\n  #\"Transposed table\" = Table.Transpose(#\"Removed columns\") in #\"Transposed table\";\r\n",
 			"documentLocale": "en-us"
 		}
 	}
